@@ -5,6 +5,8 @@ import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,6 +17,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final Gemini gemini = Gemini.instance;
+  final stt.SpeechToText _speech = stt.SpeechToText();
+
 
   List<ChatMessage> messages = [];
 
@@ -25,6 +29,9 @@ class _HomePageState extends State<HomePage> {
     profileImage:
         "https://seeklogo.com/images/G/google-gemini-logo-A5787B2669-seeklogo.com.png",
   );
+  bool _isListening = false;
+  String _voiceInput = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,6 +48,10 @@ class _HomePageState extends State<HomePage> {
   Widget _buildUI() {
     return DashChat(
       inputOptions: InputOptions(trailing: [
+        IconButton(
+          icon: const Icon(Icons.mic),
+         onPressed: _isListening ? _stopListening : _startListening,
+          ),
         IconButton(
           onPressed: _sendMediaMessage,
           icon: const Icon(
@@ -124,4 +135,30 @@ class _HomePageState extends State<HomePage> {
       _sendMessage(chatMessage);
     }
   }
+   void _startListening() async {
+    bool available = await _speech.initialize();
+    if (available) {
+      setState(() => _isListening = true);
+      _speech.listen(
+        onResult: (result) {
+          setState(() => _voiceInput = result.recognizedWords);
+          if (!_speech.isListening) {
+            // Send the recognized words as a chat message
+            ChatMessage voiceMessage = ChatMessage(
+              user: currentUser,
+              createdAt: DateTime.now(),
+              text: _voiceInput,
+            );
+            _sendMessage(voiceMessage);
+          }
+        },
+      );
+    }
+  }
+
+  void _stopListening() {
+    _speech.stop();
+    setState(() => _isListening = false);
+  }
+
 }
