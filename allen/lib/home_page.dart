@@ -26,9 +26,7 @@ class _HomePageState extends State<HomePage> {
   ChatUser currentUser = ChatUser(id: "0", firstName: "User");
   ChatUser geminiUser = ChatUser(
     id: "1",
-    firstName: "Gemini",
-    profileImage:
-        "https://seeklogo.com/images/G/google-gemini-logo-A5787B2669-seeklogo.com.png",
+    firstName: "Med",
   );
   bool _isListening = false;
   String _voiceInput = "";
@@ -39,7 +37,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
-          "Gemini Chat",
+          "Med Flow ChatBot",
         ),
       ),
       body: _buildUI(),
