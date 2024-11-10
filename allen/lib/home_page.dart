@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -120,6 +121,7 @@ class _HomePageState extends State<HomePage> {
       source: ImageSource.gallery,
     );
     if (file != null) {
+      print("Picked image: ${file.path}");
       ChatMessage chatMessage = ChatMessage(
         user: currentUser,
         createdAt: DateTime.now(),
@@ -135,6 +137,7 @@ class _HomePageState extends State<HomePage> {
       _sendMessage(chatMessage);
     }
   }
+  
    void _startListening() async {
     bool available = await _speech.initialize();
     if (available) {
